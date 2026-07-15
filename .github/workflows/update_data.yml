@@ -1,0 +1,36 @@
+name: Update SmartPLAY Data
+
+on:
+  schedule:
+    # 這裡設定每小時的第 15 分鐘執行一次 (UTC 時間)
+    - cron: '15 * * * *'
+  workflow_dispatch: # 允許你手動點擊按鈕執行
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+    - name: Checkout Repository
+      uses: actions/checkout@v3
+
+    - name: Setup Python
+      uses: actions/setup-python@v4
+      with:
+        python-version: '3.10'
+
+    - name: Install Dependencies
+      run: |
+        python -m pip install --upgrade pip
+        pip install requests
+
+    - name: Run Scraper
+      run: python scraper.py
+
+    - name: Commit and Push Changes
+      run: |
+        git config --local user.email "action@github.com"
+        git config --local user.name "GitHub Action"
+        git add data.json
+        # 如果 data.json 有變化就 commit，沒有就不理會
+        git diff --quiet && git diff --staged --quiet || git commit -m "Auto-update slots data"
+        git push
