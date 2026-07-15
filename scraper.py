@@ -1,28 +1,30 @@
 import json
-import datetime
-# import requests  # 真實環境需要用到 requests 庫來呼叫 API
+import requests
 
 def fetch_smartplay_data():
-    # 這裡是你破解 API 後的邏輯
-    # headers = {'User-Agent': '...', 'Authorization': 'Bearer ...'}
-    # response = requests.get('真正的_API_URL', headers=headers)
-    # raw_data = response.json()
+    # 👇 將你啱啱喺 Headers 抄到嘅嗰條長長 Request URL 貼喺下面兩個單引號中間！
+    api_url = 'https://www.smartplay.lcsd.gov.hk/rest/facility-catalog/api/v1/publ/facilities?venueId=72&keywords=%E5%A4%A7%E8%88%88%E9%AB%94%E8%82%B2%E9%A4%A8&playDate=2026-07-15&fatFilterType=MT'
     
-    # 這裡我們模擬把抓到的資料整理成前端需要的格式
-    processed_data = {
-        "lastUpdate": datetime.datetime.now().strftime("%Y-%m-%d %H:%M:%S"),
-        "times": ["08:00", "09:00", "10:00", "11:00", "12:00", "13:00"],
-        "schedule": [
-            {"date": "15/7", "slots": [1, 0, 0, 2, 0, 0]},
-            {"date": "16/7", "slots": [0, 0, 1, 1, 0, 0]},
-        ]
+    headers = {
+        'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/120.0.0.0 Safari/537.36',
+        'Accept': 'application/json, text/plain, */*'
     }
     
-    # 將數據寫入 data.json 檔案
-    with open('data.json', 'w', encoding='utf-8') as f:
-        json.dump(processed_data, f, ensure_ascii=False, indent=4)
-        
-    print("Data successfully saved to data.json")
+    try:
+        response = requests.get(api_url, headers=headers)
+        if response.status_code == 200:
+            raw_data = response.json()
+            
+            # 將抽返嚟嘅數據寫入 data.json
+            with open('data.json', 'w', encoding='utf-8') as f:
+                json.dump(raw_data, f, ensure_ascii=False, indent=4)
+                
+            print("🎉 成功抽到空位數據，並已儲存為 data.json！")
+        else:
+            print(f"失敗！代碼：{response.status_code}")
+            
+    except Exception as e:
+        print(f"發生錯誤：{e}")
 
 if __name__ == "__main__":
     fetch_smartplay_data()
