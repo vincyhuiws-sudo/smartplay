@@ -1,5 +1,6 @@
 import json
 import requests
+import sys
 
 def fetch_smartplay_data():
     # 👇 將你啱啱喺 Headers 抄到嘅嗰條長長 Request URL 貼喺下面兩個單引號中間！
@@ -11,20 +12,16 @@ def fetch_smartplay_data():
     }
     
     try:
-        response = requests.get(api_url, headers=headers)
-        if response.status_code == 200:
-            raw_data = response.json()
-            
-            # 將抽返嚟嘅數據寫入 data.json
-            with open('data.json', 'w', encoding='utf-8') as f:
-                json.dump(raw_data, f, ensure_ascii=False, indent=4)
-                
-            print("🎉 成功抽到空位數據，並已儲存為 data.json！")
-        else:
-            print(f"失敗！代碼：{response.status_code}")
+        response = requests.get(api_url, headers=headers, timeout=10)
+        response.raise_for_status() # 如果狀態碼不是 200，直接拋出錯誤
+        raw_data = response.json()
+        
+        with open('data.json', 'w', encoding='utf-8') as f:
+            json.dump(raw_data, f, ensure_ascii=False, indent=4)
             
     except Exception as e:
-        print(f"發生錯誤：{e}")
+        print(f"Error occurred: {e}")
+        sys.exit(1) # 讓 GitHub Action 知道程式失敗了
 
 if __name__ == "__main__":
     fetch_smartplay_data()
