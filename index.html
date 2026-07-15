@@ -1,0 +1,76 @@
+<!DOCTYPE html>
+<html lang="zh-HK">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>大興體育館 - 羽毛球場空位</title>
+    <style>
+        body { font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif; padding: 20px; background-color: #f5f6f8; }
+        .venue-card { background: white; border-radius: 12px; overflow: hidden; box-shadow: 0 4px 6px rgba(0,0,0,0.1); max-width: 800px; }
+        .header { background: #0b3f3a; color: white; padding: 15px; }
+        table { width: 100%; border-collapse: collapse; text-align: center; }
+        th, td { border: 1px solid #eee; padding: 12px 8px; }
+        th { background: #666; color: white; font-size: 12px; }
+        .date-col { background: #f9f9f9; font-weight: bold; color: #333; }
+        .available { background-color: #dcfce7; color: #166534; font-weight: bold; } /* 綠色 */
+        .full { background-color: #fee2e2; color: #991b1b; } /* 紅色 */
+        .past { background-color: #f3f4f6; color: #9ca3af; } /* 灰色 */
+    </style>
+</head>
+<body>
+
+<div class="venue-card">
+    <div class="header">
+        <h3>🏸 大興體育館 - 羽毛球場</h3>
+        <p style="font-size: 12px; margin: 0; opacity: 0.8;">最後更新: <span id="last-update">載入中...</span></p>
+    </div>
+    <table id="schedule-table">
+        </table>
+</div>
+
+<script>
+    // 假設這是從 GitHub Actions 抓下來並儲存的 data.json 格式
+    const mockData = {
+        lastUpdate: "2026-07-15 12:00:00",
+        times: ["08:00", "09:00", "10:00", "11:00", "12:00", "13:00"],
+        schedule: [
+            { date: "15/7 (Today)", slots: ["-", "-", 0, 1, 2, 0] },
+            { date: "16/7 (Tmr)", slots: [1, 1, 0, 0, 1, 0] },
+            { date: "17/7 (Fri)", slots: [0, 0, 0, 0, 0, 0] }
+        ]
+    };
+
+    // 真實環境中，你會用 fetch('data.json') 來獲取數據
+    // fetch('data.json').then(res => res.json()).then(data => renderTable(data));
+    
+    function renderTable(data) {
+        document.getElementById('last-update').innerText = data.lastUpdate;
+        const table = document.getElementById('schedule-table');
+        
+        // 畫表頭 (時間)
+        let thead = '<tr><th class="date-col">Date</th>';
+        data.times.forEach(time => thead += `<th>${time}</th>`);
+        thead += '</tr>';
+        
+        // 畫內容 (日期 + 空位)
+        let tbody = '';
+        data.schedule.forEach(row => {
+            tbody += `<tr><td class="date-col">${row.date}</td>`;
+            row.slots.forEach(slot => {
+                let cssClass = 'full';
+                if (slot === '-') cssClass = 'past';
+                else if (slot > 0) cssClass = 'available';
+                tbody += `<td class="${cssClass}">${slot}</td>`;
+            });
+            tbody += '</tr>';
+        });
+        
+        table.innerHTML = thead + tbody;
+    }
+
+    // 執行渲染
+    renderTable(mockData);
+</script>
+
+</body>
+</html>
