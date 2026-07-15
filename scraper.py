@@ -7,8 +7,10 @@ def fetch_smartplay_data():
     api_url = 'https://www.smartplay.lcsd.gov.hk/rest/facility-catalog/api/v1/publ/facilities?venueId=72&keywords=%E5%A4%A7%E8%88%88%E9%AB%94%E8%82%B2%E9%A4%A8&playDate=2026-07-15&fatFilterType=MT'
     
     headers = {
-        'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/120.0.0.0 Safari/537.36',
-        'Accept': 'application/json, text/plain, */*'
+        'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/128.0.0.0 Safari/537.36',
+        'Accept': 'application/json, text/plain, */*',
+        'Referer': 'https://www.smartplay.lcsd.gov.hk/facilities/search-result', # 加返個 Referer 扮係由官方網頁連過嚟
+        'Accept-Language': 'zh-HK,zh;q=0.9,en-US;q=0.8,en;q=0.7'
     }
     
     try:
