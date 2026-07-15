@@ -29,48 +29,39 @@
 </div>
 
 <script>
-    // 假設這是從 GitHub Actions 抓下來並儲存的 data.json 格式
-    const mockData = {
-        lastUpdate: "2026-07-15 12:00:00",
-        times: ["08:00", "09:00", "10:00", "11:00", "12:00", "13:00"],
-        schedule: [
-            { date: "15/7 (Today)", slots: ["-", "-", 0, 1, 2, 0] },
-            { date: "16/7 (Tmr)", slots: [1, 1, 0, 0, 1, 0] },
-            { date: "17/7 (Fri)", slots: [0, 0, 0, 0, 0, 0] }
-        ]
-    };
-
-    // 真實環境中，你會用 fetch('data.json') 來獲取數據
-    // fetch('data.json').then(res => res.json()).then(data => renderTable(data));
-    
-    function renderTable(data) {
-        document.getElementById('last-update').innerText = data.lastUpdate;
-        const table = document.getElementById('schedule-table');
-        
-        // 畫表頭 (時間)
-        let thead = '<tr><th class="date-col">Date</th>';
-        data.times.forEach(time => thead += `<th>${time}</th>`);
-        thead += '</tr>';
-        
-        // 畫內容 (日期 + 空位)
-        let tbody = '';
-        data.schedule.forEach(row => {
-            tbody += `<tr><td class="date-col">${row.date}</td>`;
-            row.slots.forEach(slot => {
-                let cssClass = 'full';
-                if (slot === '-') cssClass = 'past';
-                else if (slot > 0) cssClass = 'available';
-                tbody += `<td class="${cssClass}">${slot}</td>`;
-            });
-            tbody += '</tr>';
-        });
-        
-        table.innerHTML = thead + tbody;
+    async function loadData() {
+        try {
+            // 讀取你的 data.json
+            const response = await fetch('data.json');
+            const result = await response.json();
+            
+            // 這裡是簡單的測試，確保數據讀到了
+            console.log("成功讀取數據:", result);
+            
+            // 注意：因為 SmartPLAY 的數據結構很深
+            // 你需要根據 data.json 裡面的實際架構來提取時段數據
+            // 下面這行只是範例，你需要根據你 data.json 的實際內容調整
+            const slotsData = result.data.afternoon.distList[0].slots; 
+            
+            document.getElementById('last-update').innerText = new Date().toLocaleString();
+            
+            // 這裡呼叫你的渲染函數
+            renderTable(slotsData);
+            
+        } catch (error) {
+            console.error("讀取失敗:", error);
+            document.getElementById('last-update').innerText = "讀取失敗，請檢查 data.json 格式";
+        }
     }
 
-    // 執行渲染
-    renderTable(mockData);
-</script>
+    // 呼叫載入函數
+    loadData();
 
+    function renderTable(data) {
+        // 這裡填寫你如何將數據轉換成表格的邏輯
+        // 為了讓你理解資料流動，你可以參考這個概念：
+        //     }
+</script>
+    
 </body>
 </html>
